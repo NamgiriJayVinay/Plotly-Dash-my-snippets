@@ -19,6 +19,21 @@ app = dash.Dash(__name__,
 markdown_text='''
 In linear regression, the relationships are modeled using linear predictor functions whose unknown model parameters are estimated from the data. Such models are called linear models.[3] Most commonly, the conditional mean of the response given the values of the explanatory variables (or predictors) is assumed to be an affine function of those values; less commonly, the conditional median or some other quantile is used. Like all forms of regression analysis,
 '''  
+
+
+
+
+#<------------------Interactive Graph callbacks------------->
+
+df = pd.read_csv('data\gapminderDataFiveYear.csv')
+
+
+year_options = []
+for year in df['year'].unique():
+    year_options.append({'label':str(year),'value':year})
+
+
+
 app.layout = html.Div([
 
     
@@ -33,14 +48,11 @@ app.layout = html.Div([
 
                     #Dropdown Multi
                     dcc.Dropdown(
-                        
-                        options=[
-                            {'label': 'New York City', 'value': 'NYC'},
-                            {'label': 'Montréal', 'value': 'MTL'},
-                            {'label': 'San Francisco', 'value': 'SF'}
-                                ],
-                        value='MTL',
-                        multi=True
+
+                        id='year-picker',
+                        options=year_options,
+                        value=df['year'].min(),
+                        #multi=True
                             ),
     
                     html.Div(className="Text",children=[
@@ -73,8 +85,12 @@ app.layout = html.Div([
                                         marks={i: 'Label {}'.format(i) for i in range(10)},
                                         value=5,
                                         ),
-                                ],
                                 #Graph preview
+                                html.Div([
+                                    dcc.Graph(id='graph')
+                                ])
+                                ],
+                                
                                     
                             ),
                     #Bottom-right panel
@@ -91,7 +107,7 @@ app.layout = html.Div([
 ])
 
 
-#decorators for ui and input interactions
+#decorators for text box in bottom right panel ui and input box in left panel  interactions
 @app.callback(Output(component_id='text_div', component_property='children'),
                                 [Input(component_id='input_text',component_property='value')])
 
@@ -100,12 +116,32 @@ app.layout = html.Div([
 def upadate_plane(input_value):
     return "You Entered :{}".format(input_value)
 
-#<------------------Interactive Graph callbacks------------->
+#decorator for graph call back from left panel dropdown to  right -top panel 
+@app.callback(Output('graph','figure'),
+                    [Input('year-picker','value')])
+#update graph function
+def update_figure(selected_year):
 
-df = pd.read_csv('data\gapminderDataFiveYear.csv')
+    #data only for selected year from dropdown
+    filtered_df = df[df['year'] == selected_year]
+    
+    traces = []
+    
+    for continent_name in filtered_df['continent'].unique():
+        df_by_continent = filtered_df[filtered_df['continent'] == continent_name]
+        traces.append(go.Scatter(
+            x=df_by_continent['gdpPercap'],
+            y=df_by_continent['lifeExp'],
+            mode='markers',
+            opacity=0.7,
+            marker={'size': 15},
+            name=continent_name
+        ))
 
-
-
+    return {'data': traces,
+            'layout': go.Layout(title='My Plot',
+                                xaxis={'title': 'GDP per Cap', 'type': 'log'},
+                                yaxis={'title': 'Life Expectancy'})}
 
 
 
