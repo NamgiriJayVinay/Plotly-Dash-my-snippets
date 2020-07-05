@@ -1,0 +1,49 @@
+.content {
+    width: 100%;
+    background: #F7F7F7;
+}
+
+.right_content {
+    width: 75%;
+    position: absolute;
+    top: 0;
+    right: 25px;
+}
+
+.top_metrics {
+    background: #EAEAEA;
+    height: 200px;
+    width: 100%;
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 25px;
+    padding: 10%;
+}
+
+.left_menu {
+    width: 25%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100;
+    z-index: 999;
+    background: #2A3F54;
+}
+
+.down_bottom {
+    background: #0aac6e;
+    height: 200px;
+    width: 100%;
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 25px;
+    padding: 10%;
+}
+
+.Text {
+    padding: 10%;
+    color: azure;
+    font: italic small 12px/30px Georgia, serif;
+}
